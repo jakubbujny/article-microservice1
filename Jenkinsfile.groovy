@@ -28,7 +28,10 @@ spec:
                 checkout scm
                 container('docker') {
                     script {
-                        def image = docker.build('test')
+                        def image = docker.build("digitalrasta/article-microservice1:${BUILD_NUMBER}")
+                        docker.withRegistry( '', "dockerhub") {
+                            image.push()
+                        }
                     }
                 }
             }
