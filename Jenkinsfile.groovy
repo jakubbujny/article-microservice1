@@ -1,3 +1,5 @@
+microserviceName = "microservice1"
+
 pipeline {
     agent {
         kubernetes {
@@ -33,7 +35,7 @@ spec:
                 checkout scm
                 container('docker') {
                     script {
-                        def image = docker.build("digitalrasta/article-microservice1:${BUILD_NUMBER}")
+                        def image = docker.build("digitalrasta/article-${microserviceName}:${BUILD_NUMBER}")
                         docker.withRegistry( '', "dockerhub") {
                             image.push()
                         }
@@ -49,7 +51,11 @@ spec:
                         sh "curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl"
                         sh "chmod +x ./kubectl"
                         sh "mv ./kubectl /usr/local/bin/kubectl"
-                        sh "kubectl get deployments"
+                        def checkDeployment = sh(script: "kubectl get deployments | grep ${microserviceName}", returnStatus: true)
+                        if(checkDeployment != 0) {
+                            sh "kubectl apply -f deploy/deploy.yaml"
+                        }
+                        sh "kubectl set image deployment/${microserviceName} ${microserviceName}=digitalrasta/article-${microserviceName}:${BUILD_NUMBER}"
                     }
                 }
             }
