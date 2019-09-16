@@ -15,6 +15,10 @@ spec:
     volumeMounts:
     - name: dockersock
       mountPath: /var/run/docker.sock
+  - name: kubectl
+    image: bitnami/kubectl:1.15-ol-7
+    command: ['cat']
+    tty: true
   volumes:
   - name: dockersock
     hostPath:
@@ -32,6 +36,15 @@ spec:
                         docker.withRegistry( '', "dockerhub") {
                             image.push()
                         }
+                    }
+                }
+            }
+        }
+        stage('Deploy') {
+            steps {
+                container('kubectl') {
+                    script {
+                        sh "kubectl get pods"
                     }
                 }
             }
