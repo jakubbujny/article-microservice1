@@ -16,7 +16,7 @@ spec:
     - name: dockersock
       mountPath: /var/run/docker.sock
   - name: kubectl
-    image: bitnami/kubectl:1.15-ol-7
+    image: bitnami/kubectl:1.15
     command: ['cat']
     tty: true
   volumes:
