@@ -44,6 +44,10 @@ spec:
             steps {
                 container('kubectl') {
                     script {
+                        sh "apt-get update && apt-get install -y curl"
+                        sh "curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.15.0/bin/linux/amd64/kubectl"
+                        sh "chmod +x ./kubectl"
+                        sh "mv ./kubectl /usr/local/bin/kubectl"
                         sh "kubectl get pods"
                     }
                 }
